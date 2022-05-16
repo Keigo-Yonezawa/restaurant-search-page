@@ -50,7 +50,7 @@ const Slider = (props) => {
     return(
         <div className="slider-container">
             <div className="slider-value">
-                {values[indexLower]} ~ {values[indexUpper]}
+                ¥{values[indexLower]} ~ ¥{values[indexUpper]}
             </div>
             <div className="input-container" >
                 <SliderTrack 
