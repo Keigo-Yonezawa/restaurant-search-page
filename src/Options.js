@@ -82,6 +82,13 @@ export default function Options(props) {
 
     const updateGenre = (index, value) => {
         let newGenreSet = new Set(props.genreSet);
+        /*
+        if (value == 1) { 
+            genres[index]のチェックボックスにチェックが入った。 
+        } else if (value == 0) {
+            genres[index]のチェックボックスのチェックが外れた。
+        }
+        */
         if (value) {
             newGenreSet.add(genresCode[index]);
         } else {
@@ -122,7 +129,7 @@ export default function Options(props) {
                         </div>
                     </div>
                     <div className="genre-container">
-                        <h3>ジャンルから選ぶ（複数可）</h3>
+                        <h3>ジャンルから選ぶ（２つまで）</h3>
                         {genreCheckBoxes}
                     </div>
                     <div className="other-container">

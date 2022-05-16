@@ -87,6 +87,7 @@ export default function Map(props) {
             <Marker 
                 position={[shop.lat, shop.lng]}
                 bounceOnAdd={true}
+                key={shop.id}
             >
                 <Tooltip>{shop.name}</Tooltip>
             </Marker>

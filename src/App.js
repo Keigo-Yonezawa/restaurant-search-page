@@ -83,7 +83,7 @@ function App() {
 
     const params = {
       ...options,
-      genreArray: Array.from(options.genreSet),
+      genre: Array.from(options.genreSet),
       lat: c.lat,
       lng: c.lng,
     }
