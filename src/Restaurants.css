@@ -1,0 +1,106 @@
+p {
+    margin: 0;
+}
+
+#g-nav{
+    /*position:fixed;にし、z-indexの数値を大きくして前面へ*/
+    position: fixed;
+    z-index: 999;
+    /*ナビのスタート位置と形状*/
+	top:0;
+    left: min(max(-35%, -460px), -260px);
+	width: 40%;
+    min-width: 300px;
+    max-width: 500px;
+    top: 6vh;
+    height: 94vh;/*ナビの高さ*/
+	background:rgba(146, 146, 146, 0.39);
+    /*動き*/
+	transition: all 0.6s;
+}
+
+/*アクティブクラスがついたら位置を0に*/
+#g-nav.panelactive{
+    left: 0;
+}
+
+/*ナビゲーションの縦スクロール*/
+#g-nav #g-nav-list{
+    /*ナビの数が増えた場合縦スクロール*/
+    position: fixed;
+    z-index: 999; 
+    width: 40%;
+    min-width: 300px;
+    max-width: 500px;
+    height: 94vh;/*表示する高さ*/
+    overflow: auto;
+    overflow-y: scroll;
+    -webkit-overflow-scrolling: touch;
+}
+
+
+/*ナビゲーション*/
+#g-nav ul {
+    /*ナビゲーション天地中央揃え*/
+    position: absolute;
+    width: 90%;
+    display: grid;
+    z-index: 999;
+    list-style-type: none;
+    padding-inline-start: 10%;
+}
+
+
+
+/***  店のカード  ***/
+.shop-container {
+    position: flex;
+    background-color: rgb(255, 255, 255);
+    min-height: 30vh;
+    width: 94%;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 3%;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+}
+
+.shop-container img {
+    width: 40%;
+    border-radius: 5px;
+}
+
+.shop-name-container a {
+    font-size: 16px;
+    font-weight: bold;
+    margin: 1px 0px;
+    width: 100%;
+}
+
+.shop-name-container a:visited {
+    color: blue;
+}
+
+.shop-name-container a:hover {
+    color: rgb(0, 0, 143)
+}
+
+.shop-container h3 {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: normal;
+    margin: 0;
+    margin-top: 8px;
+    margin-bottom: 2px;
+    padding: 3px;
+    border: solid 1px rgb(82, 82, 82);
+    border-radius: 1px;
+
+}
+
+.shop-container h4 {
+    font-weight: normal;
+    font-size: 12px;
+    color: rgb(82, 82, 82);
+    margin: 0;
+}
