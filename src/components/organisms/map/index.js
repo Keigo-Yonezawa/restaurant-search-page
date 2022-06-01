@@ -1,7 +1,7 @@
 import React from "react"
 import { MapContainer, TileLayer, Marker, Popup, Tooltip, Circle, Pane} from 'react-leaflet'
 import { useMapEvents } from 'react-leaflet/hooks'
-import "./Map.css"
+import "./style.css"
 import 'leaflet/dist/leaflet.css'
 
 // add icons

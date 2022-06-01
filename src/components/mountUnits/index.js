@@ -1,10 +1,10 @@
 import React from "react"
 import axios from "axios"
 import qs from "qs"
-import './App.css'
-import Restaurants from "./Restaurants.js"
-import Map from "./Map.js"
-import Options from "./Options.js"
+import './style.css'
+import Restaurants from "../organisms/restaurants"
+import Map from "../organisms/map"
+import Options from "../organisms/options"
 
 
 function App() {
@@ -112,6 +112,7 @@ function App() {
         <Options
           genreSet = {options.genreSet}
           updateOptions = {(optionsDiff) => updateOptions(optionsDiff)}
+          handleChange = {(e) => {console.log(e);}}
         />
       </div>
   );

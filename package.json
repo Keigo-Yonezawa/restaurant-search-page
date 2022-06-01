@@ -1,6 +1,5 @@
 {
   "name": "app",
-  "homepage": "https://Keigo-Yonezawa.github.io/restaurant-search-page/",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
