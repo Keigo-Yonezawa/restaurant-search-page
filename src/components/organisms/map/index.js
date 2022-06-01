@@ -1,8 +1,11 @@
 import React from "react"
-import { MapContainer, TileLayer, Marker, Popup, Tooltip, Circle, Pane} from 'react-leaflet'
+import axios from "axios"
+import qs from "qs"
+import { MapContainer, TileLayer, Marker, Tooltip, Circle} from 'react-leaflet'
 import { useMapEvents } from 'react-leaflet/hooks'
 import "./style.css"
 import 'leaflet/dist/leaflet.css'
+import {DataStoreContext} from "../../../context"
 
 // add icons
 import Leaflet, { setOptions } from "leaflet";
@@ -11,19 +14,52 @@ import iconShadow from "leaflet/dist/images/marker-shadow.png";
 
 // marker setting
 let DefaultIcon = Leaflet.icon({
-  iconUrl: icon,
-  shadowUrl: iconShadow,
+    iconUrl: icon,
+    shadowUrl: iconShadow,
 });
 Leaflet.Marker.prototype.options.icon = DefaultIcon;
+
+// axiosのインスタンス作成
+const myAPI = axios.create ({
+    baseURL: 'https://fathomless-wave-02848.herokuapp.com/hotpepper/'
+})
+
+// herokuにデプロイした自作APIを叩く
+const fetchSearchData = async(params) => {
+    return await myAPI.get('', {
+        params: params,
+        paramsSerializer: (params) => {
+            return qs.stringify(params, {arrayFormat: 'repeat'});
+        }
+    })
+}
 
 
 export default function Map(props) {
 
+    const {state, dispatch} = React.useContext(DataStoreContext);
+
     const radiusFixer = 200;
-    const shops = props.shops;
-    const isSearching = props.isSearching;
     const [searchCenter, setSearchCenter] = React.useState([35.6976637865, 139.6971233896]);
     const [searchRadius, setSearchRadius] = React.useState(2000 + radiusFixer);
+
+    // c = {lat: , lng: }
+    // c を中心に指定した範囲だけ飲食店を探し，検索結果をshopsにセット。
+    const searchRestaurants = (c) => {
+
+        const params = {
+            ...state.option,
+            genre: Array.from(state.option.genreSet),
+            lat: c.lat,
+            lng: c.lng,
+        }
+
+        fetchSearchData(params).then((res) => { 
+            //setShops(res["data"]);
+            dispatch({type: "UPDATE_SHOPS", shops: res["data"]})
+            dispatch({type: "SEARCHING_END"})
+        })
+    }
 
     const calcRadiusFromZoom = (zoom) => {
         let radius;
@@ -47,22 +83,45 @@ export default function Map(props) {
         return radius + radiusFixer;
     }
 
-    const MyComponent = () => {
+    // zoom → rangeの関係
+    // * when (zoom <= 13) : range = 5（max）
+    // * when (13 <= zoom <= 17) : 1 <= range <= 5 (1ずつ変化)
+    // * when (zoom == 18) : range = 1 (min)
+    const calcRangeFromZoom = (zoom) => {
+
+        let range;
+        if (zoom < 13) {
+            range = 5;
+        } else {
+            range = 17 - zoom;
+        }
+
+        if (range <= 0) {
+            range = 1;
+        }
+
+        return range;
+    }
+
+    const EventHandler = () => {
         const map = useMapEvents({
             click: (e) => {
-                props.handleClick(e.latlng);
+                //props.handleClick(e.latlng);
+                dispatch({type: "SEARCHING_BEGIN"});
+                searchRestaurants(e.latlng);
                 setSearchCenter([e.latlng.lat, e.latlng.lng])
             },
             zoomend: (e) => {
-                props.handleZoomChange(e.target._zoom);
                 setSearchRadius(calcRadiusFromZoom(e.target._zoom));
+                dispatch({type: "UPDATE_OPTION", name: "range", value: calcRangeFromZoom(e.target._zoom)})
             }
         })
         return null;
     }
 
     const SearchingCircle = () => {
-        return isSearching ? (
+        return state.isSearching ? 
+        (
             <Circle 
                 center={searchCenter}
                 radius={searchRadius}
@@ -82,7 +141,7 @@ export default function Map(props) {
         )
     }
 
-    const Markers = shops.map((shop) => {
+    const Markers = state.shops.map((shop) => {
         return(
             <Marker 
                 position={[shop.lat, shop.lng]}
@@ -105,7 +164,7 @@ export default function Map(props) {
                 attribution="&amp;copy <a href=&quot;http://osm.org/copyright&quot;>OpenStreetMap</a> contributors"
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
-            <MyComponent />
+            <EventHandler />
             {Markers}
             <SearchingCircle />
 

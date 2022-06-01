@@ -11,7 +11,7 @@ const RadioList = (props) => {
                 id={option.option_id}
                 label={option.label}
                 key={option.label}
-                onChange={(id)=>{ props.onChange({list_name: props.list_name, option_id: id}) }}
+                onChange={(id)=>{ props.onChange({option_id: id}) }}
             />
         )
     })
