@@ -1,9 +1,10 @@
 import React from "react"
 import "./style.css"
 import {DataStoreContext} from "../../../context"
+import {SHOP} from "../../../types"
 
 
-const Shop = (props) => {
+const Shop = (props: SHOP) => {
 
     return(
         <li className="shop-container"> 
@@ -27,7 +28,7 @@ const Shop = (props) => {
 }
 
 // Shopをリスティングしたもの
-export default function Restaurants(props) {
+export default function Restaurants() {
 
     const {state, dispatch} = React.useContext(DataStoreContext);
 

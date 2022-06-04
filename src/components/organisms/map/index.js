@@ -1,14 +1,14 @@
 import React from "react"
-import axios from "axios"
-import qs from "qs"
 import { MapContainer, TileLayer, Marker, Tooltip, Circle} from 'react-leaflet'
 import { useMapEvents } from 'react-leaflet/hooks'
 import "./style.css"
 import 'leaflet/dist/leaflet.css'
 import {DataStoreContext} from "../../../context"
+import fetchMyAPI from "../../../utils/api"
+import {calcRadiusFromZoom, calcRangeFromZoom} from "../../../utils/map"
 
 // add icons
-import Leaflet, { setOptions } from "leaflet";
+import Leaflet from "leaflet";
 import icon from "leaflet/dist/images/marker-icon.png";
 import iconShadow from "leaflet/dist/images/marker-shadow.png";
 
@@ -19,23 +19,8 @@ let DefaultIcon = Leaflet.icon({
 });
 Leaflet.Marker.prototype.options.icon = DefaultIcon;
 
-// axiosのインスタンス作成
-const myAPI = axios.create ({
-    baseURL: 'https://fathomless-wave-02848.herokuapp.com/hotpepper/'
-})
 
-// herokuにデプロイした自作APIを叩く
-const fetchSearchData = async(params) => {
-    return await myAPI.get('', {
-        params: params,
-        paramsSerializer: (params) => {
-            return qs.stringify(params, {arrayFormat: 'repeat'});
-        }
-    })
-}
-
-
-export default function Map(props) {
+export default function Map() {
 
     const {state, dispatch} = React.useContext(DataStoreContext);
 
@@ -54,53 +39,12 @@ export default function Map(props) {
             lng: c.lng,
         }
 
-        fetchSearchData(params).then((res) => { 
+        fetchMyAPI(params).then((res) => { 
             //setShops(res["data"]);
+            console.log(res["data"]);
             dispatch({type: "UPDATE_SHOPS", shops: res["data"]})
             dispatch({type: "SEARCHING_END"})
         })
-    }
-
-    const calcRadiusFromZoom = (zoom) => {
-        let radius;
-        switch (zoom) {
-            case 13:
-                radius = 2000;
-                break;
-            case 14:
-                radius = 1000;
-                break;
-            case 15:
-                radius = 500;
-                break;
-            case 16 || 17 || 18:
-                radius = 300;
-                break;
-            default:
-                radius = 3000;
-                break;
-        }
-        return radius + radiusFixer;
-    }
-
-    // zoom → rangeの関係
-    // * when (zoom <= 13) : range = 5（max）
-    // * when (13 <= zoom <= 17) : 1 <= range <= 5 (1ずつ変化)
-    // * when (zoom == 18) : range = 1 (min)
-    const calcRangeFromZoom = (zoom) => {
-
-        let range;
-        if (zoom < 13) {
-            range = 5;
-        } else {
-            range = 17 - zoom;
-        }
-
-        if (range <= 0) {
-            range = 1;
-        }
-
-        return range;
     }
 
     const EventHandler = () => {

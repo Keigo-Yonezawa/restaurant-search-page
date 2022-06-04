@@ -1,16 +1,21 @@
 import React from "react"
+import {STATE, ACTION, SHOP} from "../types"
 
 
-const reducer = (state, action) => {
+const reducer: React.Reducer<STATE, ACTION> = (state, action) => {
 
     let nState;
 
     switch(action.type){
 
-        case "UPDATE_OPTION":
+        case "UPDATE_OPTION_BOOL":
             nState = state;
-            nState.option[action.name] = action.value
-            console.log(nState);
+            nState.option[action.name] = action.value as boolean;
+            return nState;
+        
+        case "UPDATE_OPTION_NUM":
+            nState = state;
+            nState.option[action.name] = action.value as number;
             return nState;
 
         case "UPDATE_GENRE_SET":
@@ -20,7 +25,6 @@ const reducer = (state, action) => {
             }else{
                 nState.option["genreSet"].delete(action.name)
             }
-            console.log(nState);
             return nState;
 
         case "SEARCHING_BEGIN":
@@ -46,27 +50,30 @@ const reducer = (state, action) => {
     }
 }
 
-const initialState = {
+const initialState: STATE = {
     option: {
-        wifi: 0,
-        card: 0,
-        wine: 0,
-        nihonsyu: 0,
-        free_drink: 0,
-        free_food: 0,
+        wifi: false,
+        card: false,
+        wine: false,
+        nihonsyu: false,
+        free_drink: false,
+        free_food: false,
         budgetLower: 0,
         budgetUpper: 99999,
         genreSet: new Set(),
         order: 4,
         range: 4,
     },
-    shops: [],
+    shops: [] as Array<SHOP>,
     isSearching: false,
 }
 
-export const DataStoreContext = React.createContext(initialState);
+export const DataStoreContext = React.createContext({} as {
+    state: STATE,
+    dispatch: React.Dispatch<ACTION>,
+})
 
-export const DataStoreContextProvider = (props) => {
+export const DataStoreContextProvider = (props: any) => {
 
     const [state, dispatch] = React.useReducer(reducer, initialState);
 
@@ -77,7 +84,7 @@ export const DataStoreContextProvider = (props) => {
                 dispatch,
             }}
         >
-            {props.children}
+        {props.children}
         </DataStoreContext.Provider>
     )
 }

@@ -1,29 +1,12 @@
 import React from "react"
 import "./style.css"
 import CheckBoxList from "../../molecules/checkBoxList"
+import CheckBoxSet from "../../molecules/checkBoxSet"
 import RadioList from "../../molecules/radioList"
 import DualRange from "../../molecules/dualRange"
 import {DataStoreContext} from "../../../context"
-
-const genreCodeHash = [
-    {code: "G001", label: "居酒屋"},
-    {code: "G002", label: "ダイニングバー・バル"},
-    {code: "G003", label: "創作料理"},
-    {code: "G004", label: "和食"},
-    {code: "G005", label: "洋食"},
-    {code: "G006", label: "イタリアン・フレンチ"},
-    {code: "G007", label: "中華"},
-    {code: "G008", label: "焼肉・ホルモン"},
-    {code: "G017", label: "韓国料理"},
-    {code: "G009", label: "アジア・エスニック料理"},
-    {code: "G010", label: "各国料理"},
-    {code: "G011", label: "カラオケ・パーティ"},
-    {code: "G012", label: "バー・カクテル"},
-    {code: "G013", label: "ラーメン"},
-    {code: "G016", label: "お好み焼き・もんじゃ"},
-    {code: "G014", label: "カフェ・スイーツ"},
-    {code: "G015", label: "その他グルメ"},
-]
+import {GENRE_CODE_HASH} from "../../../utils/param"
+import {CHECK_EVENT, RADIO_EVENT, DUAL_RANGE_EVENT, GENRE_EVENT, OPTION_NAME_NUM, OPTION_NAME_BOOL, GENRE_CODE} from "../../../types"
 
 
 // Options React JSX
@@ -31,12 +14,16 @@ export default function Options() {
 
     const {state, dispatch} = React.useContext(DataStoreContext);
 
-    const handleChange = ({name, value}) => {
-        dispatch({type: "UPDATE_OPTION", name: name, value: value});
+    const handleBoolChange = (e: {name: OPTION_NAME_BOOL, value: boolean}) => {
+        dispatch({type: "UPDATE_OPTION_BOOL", name: e.name, value: e.value});
     }
 
-    const handleGenreChange = ({name, value}) => {
-        dispatch({type: "UPDATE_GENRE_SET", name: name, value: value});
+    const handleNumChange = (e: {name: OPTION_NAME_NUM, value: number}) => {
+        dispatch({type: "UPDATE_OPTION_NUM", name: e.name, value: e.value});
+    }
+
+    const handleGenreChange = (e: {name: GENRE_CODE, value: boolean}) => {
+        dispatch({type: "UPDATE_GENRE_SET", name: e.name, value: e.value});
     }
 
 
@@ -49,8 +36,9 @@ export default function Options() {
                         lower_name="budgetLower"
                         upper_name="budgetUpper"
                         value_head="¥"
+                        value_tail=""
                         values={[0, 500, 1000, 1500, 2000, 3000, 4000, 5000, 7000, 10000, 15000, 20000, 30000, 99999]}
-                        handleChange={(e)=>{handleChange({name: e.name, value: e.value})}}
+                        handleChange={(e: DUAL_RANGE_EVENT)=>{handleNumChange({name: e.name, value: e.value})}}
                     />
                     <CheckBoxList 
                         title="食べ放題・飲み放題"
@@ -58,14 +46,14 @@ export default function Options() {
                             {name: "free_food", label: "食べ放題あり"},
                             {name: "free_drink", label: "飲み放題あり"},
                         ]}
-                        onChange={(e)=>{handleChange({name: e.name, value: e.isChecked})}}
+                        onChange={(e: CHECK_EVENT)=>{handleBoolChange({name: e.name, value: e.isChecked})}}
                     />
-                    <CheckBoxList 
+                    <CheckBoxSet 
                         title="ジャンルから選ぶ（２つまで）"
                         options={
-                            genreCodeHash.map((c) => {return {name: c.code, label: c.label}})
+                            GENRE_CODE_HASH.map((c) => {return {name: c.code as GENRE_CODE, label: c.label as string}})
                         }
-                        onChange={(e)=>{handleGenreChange({name: e.name, value: e.isChecked})}}
+                        onChange={(e: GENRE_EVENT)=>{handleGenreChange({name: e.name, value: e.isChecked})}}
                     />
                     <CheckBoxList 
                         title="その他オプション"
@@ -75,20 +63,19 @@ export default function Options() {
                             {name: "wine", label: "ワイン充実"},
                             {name: "nihonsyu", label: "日本酒充実"},
                         ]}
-                        onChange={(e)=>{handleChange({name: e.name, value: e.isChecked})}}
+                        onChange={(e: CHECK_EVENT)=>{handleBoolChange({name: e.name, value: e.isChecked})}}
                     />
                     <RadioList
                         title="検索モード"
-                        radio_name="sort-mode"
+                        name="order"
                         options={[
                             {label: "オススメのお店を優先", option_id: 4},
                             {label: "距離が近いお店を優先", option_id: 1},
                         ]}
-                        onChange={(e)=>{handleChange({name: "order", value: e.option_id})}}
+                        onChange={(e: RADIO_EVENT)=>{handleNumChange({name: e.name, value: e.option_id})}}
                     />
                     <br/><br/><br/>
                 </div>
-
             </div>
         </div>
     )

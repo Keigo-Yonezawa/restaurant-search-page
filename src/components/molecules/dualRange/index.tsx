@@ -1,13 +1,20 @@
 import React from "react"
 import "./style.css"
+import {getMax, getMin} from "../../../utils/common"
+import { DUAL_RANGE_EVENT, OPTION_NAME_NUM } from "../../../types"
 
-// utils
-const getMax = (a, b) => { if (a >= b) { return a; } else { return b; } }
-
-const getMin = (a, b) => { if (a >= b) { return b; } else { return a; } }
+type PROPS = {
+    title: string,
+    lower_name: OPTION_NAME_NUM,
+    upper_name: OPTION_NAME_NUM,
+    value_head: string,
+    value_tail: string,
+    values: Array<number>,
+    handleChange: (e: DUAL_RANGE_EVENT) => any,
+}
 
 // Slider Track React JSX
-const SliderTrack = (props) => {
+const SliderTrack = (props: {percent1: number, percent2: number}) => {
     return (
         <div 
             className="slider-track"
@@ -26,22 +33,22 @@ const SliderTrack = (props) => {
 }
 
 // main
-const DualRange = (props) => {
+const DualRange = (props: PROPS) => {
 
     const values = props.values;
     const indexMax = values.length - 1;
 
-    const [indexLower, setIndexLower] = React.useState(0);
-    const [indexUpper, setIndexUpper] = React.useState(indexMax);
+    const [indexLower, setIndexLower] = React.useState<number>(0);
+    const [indexUpper, setIndexUpper] = React.useState<number>(indexMax);
 
-    const handleChangeLower = (e) => {
-        const index = getMin(e.target.value, indexUpper - 1);
+    const handleChangeLower = (e: any) => {
+        const index = getMin(e.target.value, Number(indexUpper) - 1);
         setIndexLower(index);
         props.handleChange({name: props.lower_name, value: values[index]});
     }
 
-    const handleChangeUpper = (e) => {
-        const index = getMax(e.target.value, parseInt(indexLower) + 1);
+    const handleChangeUpper = (e: any) => {
+        const index = getMax(e.target.value, Number(indexLower) + 1);
         setIndexUpper(index);
         props.handleChange({name: props.upper_name, value: values[index]});
     }
